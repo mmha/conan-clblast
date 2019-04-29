@@ -16,6 +16,7 @@ class ClblastConan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
     generators = "cmake"
+    requires = "khronos-opencl-headers/[>=20190412]@bincrafters/stable", "khronos-opencl-icd-loader/[>=20190412]@bincrafters/stable"
 
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
@@ -23,16 +24,6 @@ class ClblastConan(ConanFile):
 
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
-
-    def system_requirements(self):
-        if tools.os_info.with_apt:
-            installer = tools.SystemPackageTool()
-            installer.install("opencl-headers")
-            installer.install("ocl-icd-opencl-dev")
-        elif tools.os_info.with_pacman:
-            installer = tools.SystemPackageTool()
-            installer.install("ocl-icd")
-            installer.install("opencl-headers")
 
     def config_options(self):
         if self.settings.os == 'Windows':
