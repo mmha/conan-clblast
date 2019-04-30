@@ -14,7 +14,7 @@ class ClblastConan(ConanFile):
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "Apache-2.0"
     exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt", "0001-Add-dl-and-pthread-to-required-OpenCL-libs.patch"]
+    exports_sources = ["CMakeLists.txt", "0001-Work-around-CMake-s-FindOpenCL-not-adding-all-depend.patch"]
     generators = "cmake"
     requires = "khronos-opencl-headers/[>=20190412]@bincrafters/stable", "khronos-opencl-icd-loader/[>=20190412]@bincrafters/stable"
 
@@ -43,7 +43,7 @@ class ClblastConan(ConanFile):
         return cmake
 
     def build(self):
-        tools.patch(base_path=self._source_subfolder, patch_file="0001-Add-dl-and-pthread-to-required-OpenCL-libs.patch")
+        tools.patch(base_path=self._source_subfolder, patch_file="0001-Work-around-CMake-s-FindOpenCL-not-adding-all-depend.patch")
         cmake = self._configure_cmake()
         cmake.build()
 

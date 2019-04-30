@@ -1,23 +1,26 @@
-From d5ea63558df6c806da05ff3d9653ea505c79a794 Mon Sep 17 00:00:00 2001
+From 6833a74378009c1db2598322e4c2c0097670795e Mon Sep 17 00:00:00 2001
 From: Morris Hafner <morris.hafner@codeplay.com>
-Date: Mon, 29 Apr 2019 17:45:41 +0100
-Subject: [PATCH] Add dl and pthread to required OpenCL libs
+Date: Tue, 30 Apr 2019 16:57:58 +0100
+Subject: [PATCH] Work around CMake's FindOpenCL not adding all dependencies
 
 ---
- CMakeLists.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3101b..e13e839 100644
+index fc3101b..f142505 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -164,7 +164,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${clblast_SOURCE_DIR}/cmake/Modules/
+@@ -164,7 +164,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${clblast_SOURCE_DIR}/cmake/Modules/
  if(OPENCL)
    # Requires OpenCL. It is found through the included "FindOpenCL.cmake" in CMAKE_MODULE_PATH.
    find_package(OpenCL REQUIRED)
 -  set(API_LIBRARIES ${OPENCL_LIBRARIES})
 +  find_package(Threads REQUIRED)
 +  set(API_LIBRARIES ${OPENCL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
++  if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
++    list(APPEND API_LIBRARIES cfgmgr32) # Needed by the ICD loader
++  endif()
    set(API_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS})
  elseif(CUDA)
    # For CUDA, the "FindCUDA.cmake" is part of CMake
